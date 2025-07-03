@@ -24,9 +24,10 @@ class MyGame extends FlameGame {
     await Flame.images.load('enemy.png');
 
     Enemy enemy = Enemy();
-    enemy.angle = 30 * pi / 180;
+    enemy.angle = pi / 180;
 
     addAll([Player(), enemy]);
+    enemy.position = Vector2(300, 300);
 
     // add(Player());
     // add(Enemy());
