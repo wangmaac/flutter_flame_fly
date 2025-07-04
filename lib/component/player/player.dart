@@ -14,6 +14,22 @@ class Player extends SpriteComponent with HasGameReference<MyGame> {
     anchor = Anchor.center;
     position = Vector2(game.size.x / 2, game.size.y - size.y / 2);
   }
+
+  void moveLeft(double speed) {
+    position.x = (position.x - speed * 0.016).clamp(0, game.size.x - size.x);
+  }
+
+  void moveRight(double speed) {
+    position.x = (position.x + speed * 0.016).clamp(0, game.size.x - size.x);
+  }
+
+  void movePointLeft(double dx) {
+    position.x = dx.clamp(size.x / 2, game.size.x - size.x);
+  }
+
+  void movePointRight(double dx) {
+    position.x = dx.clamp(size.x / 2, game.size.x - size.x / 2);
+  }
 }
 
 //직접 다 그릴자신 있으면, 하지만 우리는 그냥 이미지(스프라이트)로 처리할꺼임.

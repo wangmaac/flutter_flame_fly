@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:math';
 
+import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame/src/components/core/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flame_fly/component/enemy/enemy.dart';
 import 'package:flutter_flame_fly/component/player/player.dart';
@@ -17,21 +16,27 @@ class GameWidgetPage extends StatelessWidget {
   }
 }
 
-class MyGame extends FlameGame {
+enum Direction { left, right }
+
+class MyGame extends FlameGame with PanDetector {
+  late Direction enemyDirection;
+  bool isTouchWall = false;
+  List<Enemy> enemies = [];
+  final Player player = Player();
+
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
+    enemyDirection = Direction.right;
     await Flame.images.load('player_image.png');
 
     //포지션이 변화한다.
     //add 할때 onload를 실행한다. 그러므로 enemy안에서  position을 정하면 먹어버린다.
-    Player play = Player();
-    add(play);
+    add(player);
     spawnEnemies();
   }
 
   void spawnEnemies() {
-    List<Enemy> enemies = [];
     int enemyCount = 5;
     double enemyWidth = 50;
     double y = 25;
@@ -44,5 +49,31 @@ class MyGame extends FlameGame {
       enemies.add(e);
     }
     addAll(enemies);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  void changeEnemyDirection() {
+    enemyDirection = enemyDirection == Direction.right ? Direction.left : Direction.right;
+    isTouchWall = !isTouchWall;
+    for (var o in enemies) {
+      o.position.y += 50;
+    }
+  }
+
+  @override
+  void onPanUpdate(DragUpdateInfo info) {
+    final delta = info.delta.global.x;
+    final dx = info.eventPosition.global.x;
+    if (delta < 0) {
+      player.movePointLeft(dx);
+      // player.shieldItem.movePointLeft(dx);
+    } else if (delta > 0) {
+      player!.movePointRight(dx);
+      // player!.shieldItem.movePointRight(dx);
+    }
   }
 }
