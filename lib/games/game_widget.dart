@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/src/components/core/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flame_fly/component/enemy/enemy.dart';
 import 'package:flutter_flame_fly/component/player/player.dart';
@@ -21,15 +22,27 @@ class MyGame extends FlameGame {
   FutureOr<void> onLoad() async {
     await super.onLoad();
     await Flame.images.load('player_image.png');
-    await Flame.images.load('enemy.png');
 
-    Enemy enemy = Enemy();
-    enemy.angle = pi / 180;
+    //포지션이 변화한다.
+    //add 할때 onload를 실행한다. 그러므로 enemy안에서  position을 정하면 먹어버린다.
+    Player play = Player();
+    add(play);
+    spawnEnemies();
+  }
 
-    addAll([Player(), enemy]);
-    enemy.position = Vector2(300, 300);
+  void spawnEnemies() {
+    List<Enemy> enemies = [];
+    int enemyCount = 5;
+    double enemyWidth = 50;
+    double y = 25;
+    double totalWidth = enemyCount * enemyWidth;
+    double startX = (size.x - totalWidth) / 2;
 
-    // add(Player());
-    // add(Enemy());
+    for (var i = 0; i < enemyCount; ++i) {
+      Enemy e = Enemy();
+      e.position = Vector2(startX + i * enemyWidth, y);
+      enemies.add(e);
+    }
+    addAll(enemies);
   }
 }

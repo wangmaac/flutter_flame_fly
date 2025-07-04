@@ -10,7 +10,7 @@ class Player extends SpriteComponent with HasGameReference<MyGame> {
     await super.onLoad();
     final image = Flame.images.fromCache('player_image.png');
     sprite = Sprite(image, srcPosition: Vector2(109, 1), srcSize: Vector2(105, 96));
-    size = Vector2(sprite!.src.width / 2, sprite!.src.height / 2);
+    // size = Vector2(sprite!.src.width / 2, sprite!.src.height / 2);
     anchor = Anchor.center;
     position = Vector2(game.size.x / 2, game.size.y - size.y / 2);
   }
