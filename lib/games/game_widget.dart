@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flame_fly/component/enemy/enemy.dart';
+import 'package:flutter_flame_fly/component/player/missile.dart';
 import 'package:flutter_flame_fly/component/player/player.dart';
 
 class GameWidgetPage extends StatelessWidget {
@@ -32,6 +34,7 @@ class MyGame extends FlameGame with PanDetector {
 
     //포지션이 변화한다.
     //add 할때 onload를 실행한다. 그러므로 enemy안에서  position을 정하면 먹어버린다.
+    player.priority = 2;
     add(player);
     spawnEnemies();
   }
@@ -51,9 +54,22 @@ class MyGame extends FlameGame with PanDetector {
     addAll(enemies);
   }
 
+  double _timeSinceLastSpawn = 0;
+  final double spawnInterval = 1; // 1초
+
+
   @override
-  void update(double dt) {
+  update(double dt) {
     super.update(dt);
+    _timeSinceLastSpawn += dt;
+    if (_timeSinceLastSpawn >= spawnInterval) {
+
+      final missile = Missile(player.position.clone()..translate(0, 0));
+      missile.priority = 1;
+      add(missile);
+      _timeSinceLastSpawn = 0; // Reset timer
+    }
+
   }
 
   void changeEnemyDirection() {

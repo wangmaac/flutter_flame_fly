@@ -24,13 +24,13 @@ class Enemy extends SpriteComponent with HasGameReference<MyGame> {
     if (game.enemyDirection == Direction.right) {
       position.x++;
       //! right 벽에 닿으면,
-      if (position.x == game.size.x - (size.x / 2)) {
+      if (position.x >= game.size.x - (size.x / 2)) {
         game.changeEnemyDirection();
       }
     } else {
       position.x--;
       //! 벽에 닿으면,
-      if (position.x == size.x / 2) {
+      if (position.x <= size.x / 2) {
         game.changeEnemyDirection();
       }
     }
