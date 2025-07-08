@@ -6,7 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flame_fly/component/enemy/enemy.dart';
-import 'package:flutter_flame_fly/component/player/missile.dart';
+import 'package:flutter_flame_fly/component/player/plyaer_missile.dart';
 import 'package:flutter_flame_fly/component/player/player.dart';
 
 class GameWidgetPage extends StatelessWidget {
@@ -20,7 +20,7 @@ class GameWidgetPage extends StatelessWidget {
 
 enum Direction { left, right }
 
-class MyGame extends FlameGame with PanDetector {
+class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late Direction enemyDirection;
   bool isTouchWall = false;
   List<Enemy> enemies = [];
@@ -56,21 +56,6 @@ class MyGame extends FlameGame with PanDetector {
 
   double _timeSinceLastSpawn = 0;
   final double spawnInterval = 1; // 1초
-
-
-  @override
-  update(double dt) {
-    super.update(dt);
-    _timeSinceLastSpawn += dt;
-    if (_timeSinceLastSpawn >= spawnInterval) {
-
-      final missile = Missile(player.position.clone()..translate(0, 0));
-      missile.priority = 1;
-      add(missile);
-      _timeSinceLastSpawn = 0; // Reset timer
-    }
-
-  }
 
   void changeEnemyDirection() {
     enemyDirection = enemyDirection == Direction.right ? Direction.left : Direction.right;
