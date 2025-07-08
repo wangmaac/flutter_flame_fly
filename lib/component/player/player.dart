@@ -1,26 +1,27 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flutter_flame_fly/component/enemy/enemy.dart';
+import 'package:flutter_flame_fly/component/enemy/enemy_missile.dart';
+import 'package:flutter_flame_fly/component/enemy/enemy_missile2.dart';
 import 'package:flutter_flame_fly/games/game_widget.dart';
 
-class Player extends SpriteComponent with HasGameReference<MyGame> {
+import 'plyaer_missile.dart';
+
+class Player extends SpriteComponent with HasGameReference<MyGame>, CollisionCallbacks {
+  double _timeSinceLastSpawn = 0;
+  final double spawnInterval = 1; // 1초
+
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
     final image = Flame.images.fromCache('player_image.png');
     sprite = Sprite(image, srcPosition: Vector2(109, 1), srcSize: Vector2(105, 96));
-    // size = Vector2(sprite!.src.width / 2, sprite!.src.height / 2);
+    add(RectangleHitbox());
     anchor = Anchor.center;
     position = Vector2(game.size.x / 2, game.size.y - size.y / 2);
-  }
-
-  void moveLeft(double speed) {
-    position.x = (position.x - speed * 0.016).clamp(0, game.size.x - size.x);
-  }
-
-  void moveRight(double speed) {
-    position.x = (position.x + speed * 0.016).clamp(0, game.size.x - size.x);
   }
 
   void movePointLeft(double dx) {
@@ -30,7 +31,25 @@ class Player extends SpriteComponent with HasGameReference<MyGame> {
   void movePointRight(double dx) {
     position.x = dx.clamp(size.x / 2, game.size.x - size.x / 2);
   }
-}
 
-//직접 다 그릴자신 있으면, 하지만 우리는 그냥 이미지(스프라이트)로 처리할꺼임.
-class Player2 extends Component {}
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is EnemyMissile2 || other is Enemy) {
+      game.pauseEngine();
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _timeSinceLastSpawn += dt;
+    if (_timeSinceLastSpawn >= spawnInterval) {
+      print(position);
+      final missile = PlayerMissile(position.clone()..translate(0, 0));
+      missile.priority = 10;
+      game.add(missile);
+      _timeSinceLastSpawn = 0; // Reset timer
+    }
+  }
+}
