@@ -19,6 +19,9 @@ class Player extends SpriteComponent with HasGameReference<MyGame>, CollisionCal
     await super.onLoad();
     final image = Flame.images.fromCache('player_image.png');
     sprite = Sprite(image, srcPosition: Vector2(109, 1), srcSize: Vector2(105, 96));
+    //sprite의 사이즈를 반으로 줄임
+    size = sprite!.srcSize / 2;
+
     add(RectangleHitbox());
     anchor = Anchor.center;
     position = Vector2(game.size.x / 2, game.size.y - size.y / 2);
